@@ -1,7 +1,9 @@
 let playedCode = '';
-const theCode = '70666568706665';
 const theSoundKeyCodes = [70, 66, 65, 68, 70, 66, 65];
+const step = 95 / theSoundKeyCodes.length;
 let count = 0;
+let status;
+let statusCalc;
 
 function removeTransition(e) {
   if (e.propertyName !== 'transform') return;
@@ -9,15 +11,14 @@ function removeTransition(e) {
 }
 
 function main(e){
-  console.log(status);
   if (!checkStrokes(e)) return;
+  addStatusBar(e);
+  console.log(status);
   collectStrokesKey(e);
   playSound(e);
-  addStatusBar(e);
 }
 
 function checkStrokes(e){
-  console.log();
   return theSoundKeyCodes.indexOf(e.keyCode) > -1;
 }
 
@@ -33,29 +34,26 @@ function playSound(e) {
   key.classList.add('playing');
   audio.currentTime = 0;
   audio.play();
-
 }
 
 function playTheSong(played) {
-  if(played == theCode){
-    const audio = document.querySelector('.instrumetal');
-    audio.currentTime = 0;
-    audio.play();
-    audio.addEventListener("ended", function(){
+  if(status != '95%') return;
+  status = '';
+  const audio = document.querySelector('.instrumetal');
+  audio.currentTime = 0;
+  audio.play();
+  audio.addEventListener("ended", function(){
     console.log("ended");
     count = 0;
     document.documentElement.style.setProperty(`--width`, 0);
-});
-  }
-  return;
+  });
 }
 
 function addStatusBar(e) {
-
   if(theSoundKeyCodes[count] === e.keyCode){
     count++;
-    let tempCalc = count * 13.555;
-    let status = tempCalc + '%';
+    statusCalc = count * step;
+    status = statusCalc + '%';
     document.documentElement.style.setProperty(`--width`, status);
   }
 }
